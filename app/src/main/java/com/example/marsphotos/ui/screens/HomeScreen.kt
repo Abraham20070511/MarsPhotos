@@ -1,29 +1,14 @@
 /*
  * Copyright (C) 2023 The Android Open Source Project
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licencia bajo la Apache License, Version 2.0
+ * Puedes obtener una copia en: https://www.apache.org/licenses/LICENSE-2.0
  */
+
 package com.example.marsphotos.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,65 +18,85 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.marsphotos.R
+import com.example.marsphotos.model.MarsPhoto
 import com.example.marsphotos.ui.theme.MarsPhotosTheme
 
+/**
+ * Pantalla principal (HomeScreen) que cambia el contenido según el estado de la interfaz de usuario.
+ *
+ * @param marsUiState Estado actual (cargando, éxito, error).
+ * @param modifier Modificador de estilo opcional.
+ * @param contentPadding Relleno opcional para el contenido.
+ */
 @Composable
 fun HomeScreen(
     marsUiState: MarsUiState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
+    // Muestra una pantalla distinta según el estado
     when (marsUiState) {
-        is MarsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is MarsUiState.Success -> ResultScreen(
-            marsUiState.photos, modifier = modifier.fillMaxWidth()
-        )
-        is MarsUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
+        is MarsUiState.Loading ->
+            LoadingScreen(modifier = modifier.fillMaxSize())
+        is MarsUiState.Success ->
+            ResultScreen(marsUiState.photos, modifier = modifier.fillMaxWidth())
+        is MarsUiState.Error ->
+            ErrorScreen(modifier = modifier.fillMaxSize())
     }
 }
 
 /**
- * The home screen displaying the loading message.
+ * Pantalla mostrada cuando los datos se están cargando.
+ * Muestra una imagen de carga.
  */
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
     Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.loading_img),
-        contentDescription = stringResource(R.string.loading)
+        modifier = modifier.size(200.dp), // Tamaño de la imagen
+        painter = painterResource(R.drawable.loading_img), // Imagen de recursos
+        contentDescription = stringResource(R.string.loading) // Texto alternativo accesible
     )
 }
 
 /**
- * The home screen displaying error message with re-attempt button.
+ * Pantalla mostrada cuando ocurre un error.
+ * Muestra una imagen de error y un mensaje.
  */
 @Composable
 fun ErrorScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.Center, // Centrado vertical
+        horizontalAlignment = Alignment.CenterHorizontally // Centrado horizontal
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = ""
+            painter = painterResource(id = R.drawable.ic_connection_error), // Imagen de error
+            contentDescription = "" // Sin descripción (podría agregarse para accesibilidad)
         )
-        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
+        Text(
+            text = stringResource(R.string.loading_failed), // Texto de error
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
 
 /**
- * ResultScreen displaying number of photos retrieved.
+ * Pantalla mostrada cuando se cargan correctamente las fotos.
+ * Por ahora muestra solo el número total como texto.
+ *
+ * @param photos Cadena con el número de fotos o descripción.
  */
 @Composable
 fun ResultScreen(photos: String, modifier: Modifier = Modifier) {
     Box(
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center, // Centra el contenido
         modifier = modifier
     ) {
-        Text(text = photos)
+        Text(text = photos) // Muestra el texto
     }
 }
 
+// Vista previa del estado de carga
 @Preview(showBackground = true)
 @Composable
 fun LoadingScreenPreview() {
@@ -100,6 +105,7 @@ fun LoadingScreenPreview() {
     }
 }
 
+// Vista previa del estado de error
 @Preview(showBackground = true)
 @Composable
 fun ErrorScreenPreview() {
@@ -108,10 +114,12 @@ fun ErrorScreenPreview() {
     }
 }
 
+// Vista previa del estado de éxito con datos simulados
 @Preview(showBackground = true)
 @Composable
 fun PhotosGridScreenPreview() {
     MarsPhotosTheme {
-        ResultScreen(stringResource(R.string.placeholder_success))
+        val mockData = List(10) { MarsPhoto("$it", "") } // Lista ficticia de fotos
+        ResultScreen(stringResource(R.string.placeholder_success)) // Texto simulado
     }
 }
